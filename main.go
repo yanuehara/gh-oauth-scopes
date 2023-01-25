@@ -3,10 +3,12 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"io/ioutil"
 	"encoding/json"
 
 	"github.com/cli/go-gh"
+	"github.com/mgutz/ansi"
 )
 
 func main() {
@@ -40,5 +42,15 @@ func main() {
 		return
 	}
 
-	fmt.Println("Acessing github as @%s with oauth scopes %s", data.Login, resp.Header.Get("X-Oauth-Scopes"))
+	oauthScopes := strings.Split(resp.Header.Get("X-Oauth-Scopes"), ",")
+	greenText := ansi.ColorFunc("green")
+	blueText := ansi.ColorFunc("blue+b")
+
+
+	fmt.Printf("Acessing github as @%s with oauth scopes: \n", blueText(data.Login))
+	for i := 0; i < len(oauthScopes); i++ {
+		fmt.Printf("  * %s\n",
+			greenText(strings.TrimLeft(oauthScopes[i], " ")),
+		)
+	}
 }
